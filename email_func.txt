@@ -13,11 +13,11 @@ $disks = get-wmiobject -class "Win32_LogicalDisk" -namespace "root\CIMV2"
 function email1($string,$value)
 {
 
-$username="g8111997@gmail.com"  #Enter sender email
-$password = ConvertTo-SecureString “g@UR@v123” -AsPlainText -Force #sender password
+$username="SENDER_EMAIL"  #Enter sender email
+$password = ConvertTo-SecureString "EMAIL_PASSWORD” -AsPlainText -Force #sender password
 $Cred = New-Object System.Management.Automation.PSCredential (“$username”, $password)
-$From = " " #sender email address
-$To = " " #recipient address 
+$From = " " #sender email address between quotes
+$To = " " #recipient address between quotes
 $Subject = "ALERT!"
 $Body = "$string USAGE IS $value%"
 $SMTPServer = "smtp.gmail.com"
