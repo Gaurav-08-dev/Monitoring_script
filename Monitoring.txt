@@ -1,0 +1,50 @@
+$s1="CPU"
+$s2="Memory"
+
+
+$Processor = (Get-WmiObject -Class win32_processor -ErrorAction Stop | Measure-Object -Property LoadPercentage -Average | Select-Object Average).Average
+
+$mem = Get-WmiObject win32_operatingsystem |
+Foreach {"{0:N2}" -f ((($_.TotalVisibleMemorySize - $_.FreePhysicalMemory)*100)/ $_.TotalVisibleMemorySize)} 
+
+$disks = get-wmiobject -class "Win32_LogicalDisk" -namespace "root\CIMV2"
+
+
+
+
+
+if ($Processor -gt 1) #change the threshold value  
+{
+write-host $s1 $Processor
+}
+if ($mem -gt 1 ) #change the threshold value
+{
+write-host $s2 $mem
+}
+
+
+
+foreach ($disk in $disks)
+{
+
+    if ($disk.Size -gt 0)
+    {
+
+    $size = [math]::round($disk.Size/1GB, 0)
+    $free= [math]::round($disk.Freespace/1GB, 0)
+    [Pscustomobject]@{
+    Drive = $disk.Name + ""
+    Name = $disk.VolumeName
+    "Total Disk Size" = $size
+    "Free Disk Size" = "{0:N0} ({1:P0})" -f $free, ($free/$size)
+    }
+    $free1 = [math]::ceiling(($free/$size)*100)
+
+    if ($free1 -lt 90)#change the threshold value
+    {
+    write-host $disk.Name $free1 
+    }
+    }
+}
+
+
